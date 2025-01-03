@@ -35,7 +35,7 @@ boundary authenticate password -password=env://BOUNDARY_AUTHENTICATE_PASSWORD_PA
 ```shell
 cd boundary-vault-community-demo
 terraform destroy -target module.configure_vault -target module.configure_client -target module.configure_boundary
-terraform apply -target module.deploy
+terraform destroy  ## destroy remaining infrastructure
 ```
 
 ## Author
