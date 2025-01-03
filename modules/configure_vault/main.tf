@@ -63,7 +63,7 @@ resource "vault_ssh_secret_backend_role" "boundary_client" {
   backend                 = vault_mount.ssh.path
   key_type                = "ca"
   allow_user_certificates = true
-  default_user            = var.ssh_user
+  default_user            = var.boundary_client_username
   default_extensions = {
     "permit-pty" = ""
   }

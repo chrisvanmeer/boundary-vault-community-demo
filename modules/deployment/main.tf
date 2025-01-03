@@ -116,6 +116,24 @@ resource "azurerm_network_security_group" "nsg" {
   }
 }
 
+resource "azurerm_network_security_group" "nsg_restricted" {
+  name                = "${var.prefix}-nsg-restricted"
+  location            = azurerm_resource_group.resource_group.location
+  resource_group_name = azurerm_resource_group.resource_group.name
+
+  security_rule {
+    name                       = "deny_incoming"
+    priority                   = 50
+    direction                  = "Inbound"
+    access                     = "Deny"
+    protocol                   = "Tcp"
+    source_port_range          = "*"
+    destination_port_range     = "*"
+    source_address_prefix      = "*"
+    destination_address_prefix = "*"
+  }
+}
+
 resource "azurerm_subnet_network_security_group_association" "association" {
   subnet_id                 = azurerm_subnet.subnet.id
   network_security_group_id = azurerm_network_security_group.nsg.id
@@ -264,4 +282,19 @@ resource "azurerm_linux_virtual_machine" "client" {
     storage_account_type = "Standard_LRS"
   }
 
+  custom_data = base64encode(join("\n", [
+    "#cloud-config",
+    "users:",
+    "  - default",
+    "  - name: ${var.boundary_client_username}",
+    "    sudo: ALL=(ALL) NOPASSWD:ALL",
+    "    shell: /bin/bash"
+  ]))
+
+}
+
+resource "azurerm_network_interface_security_group_association" "restricted" {
+  count                     = var.restricted_nsg ? 1 : 0
+  network_interface_id      = azurerm_network_interface.nic_client.id
+  network_security_group_id = azurerm_network_security_group.nsg_restricted.id
 }

@@ -56,7 +56,7 @@ variable "boundary_target_alias" {
   default     = "client.boundary"
 }
 
-variable "ssh_user" {
+variable "boundary_client_username" {
   type        = string
-  description = "The SSH user to connect to the client"
+  description = "The username that gets created on the demo client"
 }

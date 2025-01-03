@@ -90,3 +90,14 @@ variable "boundary_hclic" {
   description = "The license file"
   sensitive   = true
 }
+
+variable "boundary_client_username" {
+  type        = string
+  description = "The username that gets created on the demo client"
+}
+
+variable "restricted_nsg" {
+  type        = bool
+  description = "Should the client be restricted"
+  default     = false
+}

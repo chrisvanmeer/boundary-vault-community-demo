@@ -32,3 +32,9 @@ variable "boundary_hclic" {
     error_message = "The path to the license file \"${var.boundary_hclic}\" does not exist."
   }
 }
+
+variable "boundary_client_username" {
+  type        = string
+  description = "The username that gets created on the demo client"
+  default     = "boundary-guru"
+}

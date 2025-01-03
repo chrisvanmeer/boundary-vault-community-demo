@@ -15,7 +15,7 @@ variable "vault_ssh_secrets_engine_mount" {
   default     = "ssh"
 }
 
-variable "ssh_user" {
+variable "boundary_client_username" {
   type        = string
-  description = "The SSH user to connect to the client"
+  description = "The username that gets created on the demo client"
 }

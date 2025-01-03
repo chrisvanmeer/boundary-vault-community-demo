@@ -88,7 +88,7 @@ resource "boundary_credential_library_vault_ssh_certificate" "vault" {
   description         = "HashiCorp Vault"
   credential_store_id = boundary_credential_store_vault.vault.id
   path                = "ssh-client-signer/sign/boundary-client"
-  username            = var.ssh_user
+  username            = var.boundary_client_username
   key_type            = "ecdsa"
   key_bits            = 521
 
