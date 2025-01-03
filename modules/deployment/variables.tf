@@ -1,7 +1,6 @@
 variable "prefix" {
   type        = string
   description = "The prefix for every resource"
-  default     = "demo"
 }
 
 variable "ssh_user" {

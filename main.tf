@@ -7,9 +7,10 @@ terraform {
 # The client VM will be just a vanilla install
 module "deploy" {
   source              = "./modules/deployment"
-  boundary_hclic      = file(var.boundary_hclic)
+  prefix              = var.prefix
   ssh_user            = var.ssh_user
   ssh_public_key_file = var.ssh_public_key_file
+  boundary_hclic      = file(var.boundary_hclic)
 }
 
 # Configure Vault with the SSH secrets engine

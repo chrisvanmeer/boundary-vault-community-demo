@@ -148,6 +148,19 @@ resource "azurerm_linux_virtual_machine" "server" {
     storage_account_type = "Standard_LRS"
   }
 
+  # Provide license
+  provisioner "file" {
+    content     = "BOUNDARY_LICENSE=${var.boundary_hclic}"
+    destination = "/etc/boundary.d/boundary.env"
+    connection {
+      type     = "ssh"
+      host     = self.public_ip_address
+      user     = var.ssh_user
+      password = local.ssh_private_key_file
+      timeout  = "2m"
+    }
+  }
+
   # Install packages
   provisioner "remote-exec" {
     inline = [
@@ -158,8 +171,7 @@ resource "azurerm_linux_virtual_machine" "server" {
       "rm /tmp/hashicorp.gpg",
       "echo \"deb [arch=$(dpkg --print-architecture) signed-by=/usr/share/keyrings/hashicorp-archive-keyring.gpg] https://apt.releases.hashicorp.com $(lsb_release -cs) main\" | sudo tee /etc/apt/sources.list.d/hashicorp.list",
       "sudo apt-get update -y",
-      "sudo apt-get install -y docker.io boundary-enterprise vault",
-      "echo 'BOUNDARY_LICENSE=${var.boundary_hclic}' | sudo tee /etc/boundary.d/boundary.env"
+      "sudo apt-get install -y docker.io boundary-enterprise vault"
     ]
 
     connection {

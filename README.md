@@ -21,6 +21,7 @@ vim boundary.hclic  ## Put your license key in here
 terraform init
 terraform apply -target module.deploy
 terraform apply -target module.configure_vault -target module.configure_client -target module.configure_boundary
+terraform apply  ## to add the final outputs
 export BOUNDARY_ADDR="http://$(terraform output -json boundary_ip_address | jq -r .):9200"
 export BOUNDARY_SCOPE_ID="$(terraform output -json boundary_scope_id | jq -r .)"
 export BOUNDARY_AUTH_METHOD_ID="$(terraform output -json boundary_auth_method_id | jq -r .)"
