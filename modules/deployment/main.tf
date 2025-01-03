@@ -159,7 +159,7 @@ resource "azurerm_linux_virtual_machine" "server" {
       "echo \"deb [arch=$(dpkg --print-architecture) signed-by=/usr/share/keyrings/hashicorp-archive-keyring.gpg] https://apt.releases.hashicorp.com $(lsb_release -cs) main\" | sudo tee /etc/apt/sources.list.d/hashicorp.list",
       "sudo apt-get update -y",
       "sudo apt-get install -y docker.io boundary-enterprise vault",
-      "echo 'export BOUNDARY_LICENSE=${var.boundary_hclic}' | sudo tee /etc/profile.d/boundary-enterprise.sh"
+      "echo 'BOUNDARY_LICENSE=${var.boundary_hclic}' | sudo tee /etc/boundary.d/boundary.env"
     ]
 
     connection {
@@ -179,7 +179,7 @@ resource "azurerm_linux_virtual_machine" "server" {
       "echo 'After=network.target' | sudo tee -a /etc/systemd/system/vaultdev.service",
       "echo '' | sudo tee -a /etc/systemd/system/vaultdev.service",
       "echo '[Service]' | sudo tee -a /etc/systemd/system/vaultdev.service",
-      "echo 'ExecStart=/usr/bin/vault server -dev -dev-root-token-id=${var.vault_dev_token} -dev-listen-address=0.0.0.0:8200 >> /root/vault.service.log 2>&1' | sudo tee -a /etc/systemd/system/vaultdev.service",
+      "echo 'ExecStart=/usr/bin/vault server -dev -dev-root-token-id=${var.vault_dev_token} -dev-listen-address=0.0.0.0:8200' | sudo tee -a /etc/systemd/system/vaultdev.service",
       "echo 'Restart=always' | sudo tee -a /etc/systemd/system/vaultdev.service",
       "echo 'User=root' | sudo tee -a /etc/systemd/system/vaultdev.service",
       "echo '' | sudo tee -a /etc/systemd/system/vaultdev.service",
@@ -205,7 +205,8 @@ resource "azurerm_linux_virtual_machine" "server" {
       "echo 'After=network.target' | sudo tee -a /etc/systemd/system/boundarydev.service",
       "echo '' | sudo tee -a /etc/systemd/system/boundarydev.service",
       "echo '[Service]' | sudo tee -a /etc/systemd/system/boundarydev.service",
-      "echo 'ExecStart=/usr/bin/boundary dev -api-listen-address=0.0.0.0 -login-name=${var.boundary_login_name} -password=${var.boundary_password} -worker-public-address=${azurerm_public_ip.server.ip_address} >> /root/boundary.service.log 2>&1' | sudo tee -a /etc/systemd/system/boundarydev.service",
+      "echo 'EnvironmentFile=-/etc/boundary.d/boundary.env' | sudo tee -a /etc/systemd/system/boundarydev.service",
+      "echo 'ExecStart=/usr/bin/boundary dev -api-listen-address=0.0.0.0 -proxy-listen-address=0.0.0.0 -login-name=${var.boundary_login_name} -password=${var.boundary_password} -worker-public-address=${azurerm_public_ip.server.ip_address}' | sudo tee -a /etc/systemd/system/boundarydev.service",
       "echo 'Restart=always' | sudo tee -a /etc/systemd/system/boundarydev.service",
       "echo 'User=root' | sudo tee -a /etc/systemd/system/boundarydev.service",
       "echo '' | sudo tee -a /etc/systemd/system/boundarydev.service",

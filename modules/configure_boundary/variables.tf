@@ -40,7 +40,7 @@ variable "global_admin_id" {
 variable "guru_loginname" {
   type        = string
   description = "The user login name?"
-  default     = "bounbdary-guru"
+  default     = "boundary-guru"
 }
 
 variable "guru_password" {

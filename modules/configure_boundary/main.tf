@@ -21,6 +21,8 @@ provider "boundary" {
 
 resource "boundary_scope" "global" {
   global_scope = true
+  name         = "global"
+  description  = "Global Scope"
   scope_id     = "global"
 }
 
@@ -123,6 +125,7 @@ resource "boundary_target" "client" {
   default_port             = 22
   session_connection_limit = -1
   scope_id                 = boundary_scope.project.id
+  egress_worker_filter     = " \"local\" in \"/tags/type\" "
   host_source_ids = [
     boundary_host_set_static.clients.id
   ]
@@ -134,7 +137,7 @@ resource "boundary_target" "client" {
 resource "boundary_alias_target" "client" {
   name                      = "Client Alias"
   value                     = var.boundary_target_alias
-  scope_id                  = boundary_scope.project.id
+  scope_id                  = "global"
   destination_id            = boundary_target.client.id
   authorize_session_host_id = boundary_host_static.client.id
 }
