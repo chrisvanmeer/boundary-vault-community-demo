@@ -83,7 +83,7 @@ resource "azurerm_network_security_group" "nsg" {
 
   security_rule {
     name                       = "allow_boundary"
-    priority                   = 100
+    priority                   = 200
     direction                  = "Inbound"
     access                     = "Allow"
     protocol                   = "Tcp"
@@ -94,7 +94,7 @@ resource "azurerm_network_security_group" "nsg" {
   }
   security_rule {
     name                       = "allow_vault"
-    priority                   = 110
+    priority                   = 210
     direction                  = "Inbound"
     access                     = "Allow"
     protocol                   = "Tcp"
@@ -105,7 +105,7 @@ resource "azurerm_network_security_group" "nsg" {
   }
   security_rule {
     name                       = "allow_ssh"
-    priority                   = 120
+    priority                   = 220
     direction                  = "Inbound"
     access                     = "Allow"
     protocol                   = "Tcp"
@@ -123,7 +123,7 @@ resource "azurerm_network_security_group" "nsg_restricted" {
 
   security_rule {
     name                       = "deny_incoming"
-    priority                   = 50
+    priority                   = 100
     direction                  = "Inbound"
     access                     = "Deny"
     protocol                   = "Tcp"
