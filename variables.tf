@@ -38,3 +38,9 @@ variable "boundary_client_username" {
   description = "The username that gets created on the demo client"
   default     = "boundary-guru"
 }
+
+variable "restricted_nsg" {
+  type        = bool
+  description = "Should the client be restricted"
+  default     = false
+}

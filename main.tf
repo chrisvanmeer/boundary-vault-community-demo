@@ -12,6 +12,7 @@ module "deploy" {
   ssh_public_key_file      = var.ssh_public_key_file
   boundary_hclic           = file(var.boundary_hclic)
   boundary_client_username = var.boundary_client_username
+  restricted_nsg           = var.restricted_nsg
 }
 
 # Configure Vault with the SSH secrets engine

@@ -8,7 +8,7 @@ terraform {
 }
 
 locals {
-  ssh_private_key_file = trimsuffix(var.ssh_public_key_file, ".pub")
+  ssh_private_key_file = file(trimsuffix(var.ssh_public_key_file, ".pub"))
 }
 
 resource "null_resource" "ca_key" {
@@ -20,11 +20,9 @@ resource "null_resource" "ca_key" {
     destination = "/tmp/ca-key.pub"
 
     connection {
-      type     = "ssh"
-      host     = var.boundary_client_public_ip_address
-      user     = var.ssh_user
-      password = local.ssh_private_key_file
-      timeout  = "2m"
+      host        = var.boundary_client_public_ip_address
+      user        = var.ssh_user
+      private_key = local.ssh_private_key_file
     }
   }
 
@@ -40,11 +38,9 @@ resource "null_resource" "ca_key" {
     ]
 
     connection {
-      type     = "ssh"
-      host     = var.boundary_client_public_ip_address
-      user     = var.ssh_user
-      password = local.ssh_private_key_file
-      timeout  = "2m"
+      host        = var.boundary_client_public_ip_address
+      user        = var.ssh_user
+      private_key = local.ssh_private_key_file
     }
   }
 }

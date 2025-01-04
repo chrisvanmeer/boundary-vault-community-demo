@@ -55,18 +55,6 @@ variable "azure_instance_image_version" {
   default     = "latest"
 }
 
-variable "azure_private_ip_address_server" {
-  type        = string
-  description = "The internal IP address of the server"
-  default     = "10.0.2.10"
-}
-
-variable "azure_private_ip_address_client" {
-  type        = string
-  description = "The internal IP address of the client"
-  default     = "10.0.2.20"
-}
-
 variable "vault_dev_token" {
   type        = string
   description = "The Vault token which gets the root policy assigned"

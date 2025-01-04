@@ -12,7 +12,7 @@ provider "azurerm" {
 }
 
 locals {
-  ssh_private_key_file = trimsuffix(var.ssh_public_key_file, ".pub")
+  ssh_private_key_file = file(trimsuffix(var.ssh_public_key_file, ".pub"))
 }
 
 resource "azurerm_resource_group" "resource_group" {
@@ -56,8 +56,7 @@ resource "azurerm_network_interface" "nic_server" {
   ip_configuration {
     name                          = "eth0"
     subnet_id                     = azurerm_subnet.subnet.id
-    private_ip_address_allocation = "Static"
-    private_ip_address            = var.azure_private_ip_address_server
+    private_ip_address_allocation = "Dynamic"
     public_ip_address_id          = azurerm_public_ip.server.id
   }
 }
@@ -70,8 +69,7 @@ resource "azurerm_network_interface" "nic_client" {
   ip_configuration {
     name                          = "eth0"
     subnet_id                     = azurerm_subnet.subnet.id
-    private_ip_address_allocation = "Static"
-    private_ip_address            = var.azure_private_ip_address_client
+    private_ip_address_allocation = "Dynamic"
     public_ip_address_id          = azurerm_public_ip.client.id
   }
 }
@@ -169,13 +167,11 @@ resource "azurerm_linux_virtual_machine" "server" {
   # Provide license
   provisioner "file" {
     content     = "BOUNDARY_LICENSE=${var.boundary_hclic}"
-    destination = "/etc/boundary.d/boundary.env"
+    destination = "/tmp/boundary.env"
     connection {
-      type     = "ssh"
-      host     = self.public_ip_address
-      user     = var.ssh_user
-      password = local.ssh_private_key_file
-      timeout  = "2m"
+      host        = self.public_ip_address
+      user        = var.ssh_user
+      private_key = local.ssh_private_key_file
     }
   }
 
@@ -189,15 +185,15 @@ resource "azurerm_linux_virtual_machine" "server" {
       "rm /tmp/hashicorp.gpg",
       "echo \"deb [arch=$(dpkg --print-architecture) signed-by=/usr/share/keyrings/hashicorp-archive-keyring.gpg] https://apt.releases.hashicorp.com $(lsb_release -cs) main\" | sudo tee /etc/apt/sources.list.d/hashicorp.list",
       "sudo apt-get update -y",
-      "sudo apt-get install -y docker.io boundary-enterprise vault"
+      "sudo apt-get install -y docker.io boundary-enterprise vault",
+      "sudo cp /tmp/boundary.env /etc/boundary.d/boundary.env",
+      "sudo chown root:root /etc/boundary.d/boundary.env"
     ]
 
     connection {
-      type     = "ssh"
-      host     = self.public_ip_address
-      user     = var.ssh_user
-      password = local.ssh_private_key_file
-      timeout  = "2m"
+      host        = self.public_ip_address
+      user        = var.ssh_user
+      private_key = local.ssh_private_key_file
     }
   }
 
@@ -219,11 +215,9 @@ resource "azurerm_linux_virtual_machine" "server" {
       "sudo systemctl enable --now vaultdev.service"
     ]
     connection {
-      type     = "ssh"
-      host     = self.public_ip_address
-      user     = var.ssh_user
-      password = local.ssh_private_key_file
-      timeout  = "2m"
+      host        = self.public_ip_address
+      user        = var.ssh_user
+      private_key = local.ssh_private_key_file
     }
   }
 
@@ -246,11 +240,9 @@ resource "azurerm_linux_virtual_machine" "server" {
       "sudo systemctl enable --now boundarydev.service"
     ]
     connection {
-      type     = "ssh"
-      host     = self.public_ip_address
-      user     = var.ssh_user
-      password = local.ssh_private_key_file
-      timeout  = "2m"
+      host        = self.public_ip_address
+      user        = var.ssh_user
+      private_key = local.ssh_private_key_file
     }
   }
 }

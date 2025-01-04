@@ -15,7 +15,7 @@ output "boundary_client_public_ip_address" {
 }
 
 output "boundary_client_private_ip_address" {
-  value = var.azure_private_ip_address_client
+  value = azurerm_network_interface.nic_client.private_ip_address
 }
 
 output "boundary_client_id" {
